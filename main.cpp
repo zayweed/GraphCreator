@@ -5,18 +5,21 @@
 #include <cstring>
 #include <vector>
 #include <map>
+#include <set>
 
 using namespace std;
 
 int main() {
-  int matrix[20][20];
+  int matrix[20][20]; //adjacency matrix
   for (int i = 0; i < 20; i++) {
     for (int j = 0; j < 20; j++) {
       matrix[i][j] = 0;
     } 
   }
-  map<char, int> mp;
-  int size = 0;
+  map<char, int> mp; //map that returns index of node given its name
+  char mpR[20]; //map that returns name of node given its index(used for printing labels of adjacency matrix)
+  set<int> set; //list of the index of the removed nodes that should be ignored
+  int size = 0; //current number of nodes
 
   bool stillPlaying = true;
   while (stillPlaying == true) {
@@ -24,19 +27,18 @@ int main() {
     char input[100];
     cin >> input;
     if (strcmp(input, "AV") == 0) {
-      size++;
+      size++; //update size
       cout << "Enter the name of the vertex(has to be a character):" << endl;
       char c; cin >> c;
-      mp[c] = size-1;
+      mp[c] = size-1; //sets index of node
+      mpR[size-1] = c; //records name of node given index
     }
     
     if (strcmp(input, "RV") == 0) {
       cout << "Enter the name of the vertex(has to be a character):" << endl;
       char c; cin >> c;
-      for (int i = 0; i < size; i++) {
-        matrix[mp[c]][i] = -1;
-        matrix[i][mp[c]] = -1;
-      }
+      set.insert(mp[c]); //record as a removed node
+      mpR[mp[c]] = ' '; //
       mp.erase(c);
     }
 
@@ -58,11 +60,23 @@ int main() {
     }
 
     if (strcmp(input, "PRINT") == 0) {
+      cout << "\t";
       for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-          cout << matrix[i][j] << "\t";
-        } 
-        cout << endl;
+        if (mpR[i] != ' ') {
+          cout << mpR[i] << "\t";
+        }
+      }
+      cout << endl;
+      for (int i = 0; i < size; i++) {
+        if (set.count(i) != 1) {
+          cout << mpR[i] << "\t";
+          for (int j = 0; j < size; j++) {
+            if (set.count(j) != 1) {
+              cout << matrix[i][j] << "\t";
+            }
+          }
+          cout << endl;
+        }
       }
     }
     
