@@ -1,5 +1,7 @@
 /*
-
+Zayeed Saffat
+6/15/2022
+This project makes a weighted directed graph that is represented by a two dimensional array.
 */
 #include <iostream>
 #include <cstring>
@@ -10,66 +12,82 @@
 using namespace std;
 
 int main() {
-  int matrix[20][20]; //adjacency matrix
-  for (int i = 0; i < 20; i++) {
-    for (int j = 0; j < 20; j++) {
+  int matrix[100][100]; //adjacency matrix
+  for (int i = 0; i < 100; i++) { //fill with 0s
+    for (int j = 0; j < 100; j++) {
       matrix[i][j] = 0;
     } 
   }
-  map<char, int> mp; //map that returns index of node given its name
-  char mpR[20]; //map that returns name of node given its index(used for printing labels of adjacency matrix)
-  set<int> set; //list of the index of the removed nodes that should be ignored
-  int size = 0; //current number of nodes
+  map<char, int> indexes; //name to index in matrix
+  char names[20]; //index in matrix to name(only used for labels when printing matrix)
+  set<int> set; //indexes of vertexs that were deleted
+  int size = 0; //total size of matrix
 
   bool stillPlaying = true;
   while (stillPlaying == true) {
     cout << "Would you like to add or remove a vertex(AV)/(RV), add or remove an edge(AE)/(RE), find the shortest path(PATH), print the adjacency matrix(PRINT), or quit(QUIT)?" << endl;
     char input[100];
     cin >> input;
-    if (strcmp(input, "AV") == 0) {
+    
+    if (strcmp(input, "AV") == 0) { //add vertex
       size++; //update size
       cout << "Enter the name of the vertex(has to be a character):" << endl;
       char c; cin >> c;
-      mp[c] = size-1; //sets index of node
-      mpR[size-1] = c; //records name of node given index
+      
+      indexes[c] = size-1; //records index of vertex
+      names[size-1] = c; //records name of vertex
     }
     
-    if (strcmp(input, "RV") == 0) {
+    if (strcmp(input, "RV") == 0) { //remove vertex
       cout << "Enter the name of the vertex(has to be a character):" << endl;
       char c; cin >> c;
-      set.insert(mp[c]); //record as a removed node
-      mpR[mp[c]] = ' '; //
-      mp.erase(c);
+      
+      if (indexes.count(c) == 1) { //if there is a vertex with the inputted name
+        set.insert(indexes[c]); //record index of removed vertex
+        names[indexes[c]] = ' '; //replace name of vertex with blank space to indicate deleted vertex
+        indexes.erase(c); //remove from map
+      }
+      else {
+        cout << "Vertex does not exist!" << endl;
+      }
     }
 
-    if (strcmp(input, "AE") == 0) {
+    if (strcmp(input, "AE") == 0) { //add edge
       cout << "Enter the two vertices and the weight seperated by spaces:" << endl;
       char a, b; cin >> a >> b;
       int n; cin >> n;
-      matrix[mp[a]][mp[b]] = n;
+      
+      matrix[indexes[a]][indexes[b]] = n; //add edge to matrix
     }
-    
-    if (strcmp(input, "RE") == 0) {
+
+    if (strcmp(input, "RE") == 0) { //remove edge
       cout << "Enter the two vertices seperated by a space:" << endl;
       char a, b; cin >> a >> b;
-      matrix[mp[a]][mp[b]] = 0;
+
+      if (indexes.count(a) == 1 && indexes.count(b) == 1) { //if there are vertices with the inputted names
+        matrix[indexes[a]][indexes[b]] = 0; //remove edge edge matrix
+      }
+      else {
+        cout << "At least one of the two vertices does not exist!" << endl;
+      }
     }
 
-    if (strcmp(input, "PATH") == 0) {
+    if (strcmp(input, "PATH") == 0) { //shortest path using Dijkstra's Algorithm
 
     }
 
-    if (strcmp(input, "PRINT") == 0) {
+    if (strcmp(input, "PRINT") == 0) { //print matrix
       cout << "\t";
-      for (int i = 0; i < size; i++) {
-        if (mpR[i] != ' ') {
-          cout << mpR[i] << "\t";
+      for (int i = 0; i < size; i++) { //print labels for ending vertex
+        if (names[i] != ' ') {
+          cout << names[i] << "\t";
         }
       }
       cout << endl;
+      
       for (int i = 0; i < size; i++) {
         if (set.count(i) != 1) {
-          cout << mpR[i] << "\t";
+          cout << names[i] << "\t"; //print labels for starting vertex
           for (int j = 0; j < size; j++) {
             if (set.count(j) != 1) {
               cout << matrix[i][j] << "\t";
@@ -80,7 +98,7 @@ int main() {
       }
     }
     
-    if (strcmp(input, "QUIT") == 0) {
+    if (strcmp(input, "QUIT") == 0) { //quit
       stillPlaying = false;
     }
   }
