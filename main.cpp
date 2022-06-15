@@ -20,7 +20,7 @@ int main() {
   }
   map<char, int> indexes; //name to index in matrix
   char names[20]; //index in matrix to name(only used for labels when printing matrix)
-  set<int> set; //indexes of vertexs that were deleted
+  set<int> deleted; //indexes of vertexs that were deleted
   int size = 0; //total size of matrix
 
   bool stillPlaying = true;
@@ -43,7 +43,7 @@ int main() {
       char c; cin >> c;
       
       if (indexes.count(c) == 1) { //if there is a vertex with the inputted name
-        set.insert(indexes[c]); //record index of removed vertex
+        deleted.insert(indexes[c]); //record index of removed vertex
         names[indexes[c]] = ' '; //replace name of vertex with blank space to indicate deleted vertex
         indexes.erase(c); //remove from map
       }
@@ -86,10 +86,10 @@ int main() {
       cout << endl;
       
       for (int i = 0; i < size; i++) {
-        if (set.count(i) != 1) {
+        if (deleted.count(i) != 1) {
           cout << names[i] << "\t"; //print labels for starting vertex
           for (int j = 0; j < size; j++) {
-            if (set.count(j) != 1) {
+            if (deleted.count(j) != 1) {
               cout << matrix[i][j] << "\t";
             }
           }
